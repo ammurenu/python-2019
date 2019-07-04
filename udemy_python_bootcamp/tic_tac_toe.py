@@ -16,22 +16,52 @@ def update_board(d):
 
 def get_position(sym, d):
     pos = input("Choose your next position: (1-9)\n")
-    d[pos] = sym
-    return d
+    if d[pos] != ' ':
+        print('Wrong position! Position already filled!')
+        wrong_pos = True
+    else:
+        d[pos] = sym
+        wrong_pos = False
+    return d,wrong_pos
 
-def win_patterns(d):
-    if d['7'] == d['8'] == d['9'] != ' ' or d['4'] == d['5'] == d['6'] != ' ' or d['1'] == d['2'] == d['3'] != ' ' or d['7'] == d['4'] == d['1'] != ' ' or d['8'] == d['5'] == d['2'] != ' ' or d['9'] == d['6'] == d['3'] != ' ' or d['7'] == d['5'] == d['3'] != ' ' or d['9'] == d['5'] == d['1'] != ' ':
-        print("\nCongratulations! You have won the game \n")
+def win_patterns(d,sym_x,sym):
+    for index,value in enumerate(d.values()):
+        if value == ' ':
+            if d['7'] == d['8'] == d['9'] != ' ' or d['4'] == d['5'] == d['6'] != ' ' or d['1'] == d['2'] == d['3'] != ' ' or d['7'] == d['4'] == d['1'] != ' ' or d['8'] == d['5'] == d['2'] != ' ' or d['9'] == d['6'] == d['3'] != ' ' or d['7'] == d['5'] == d['3'] != ' ' or d['9'] == d['5'] == d['1'] != ' ':
+                who_won(sym_x,sym)
+                return True
+                break
+            else:
+                return False
+    else:
+        print('GAME OVER!')
         return True
-    else:
-        return False
 
-def which_symbol(s):
-    if s == 'X':
-        return 'O'
+def which_symbol(s,wrong_pos):
+    if wrong_pos == True:
+        if s == 'X':
+            s = 'X'
+        else:
+            s = 'O'
     else:
-        return 'X'
+        if s == 'X':
+            s = 'O'
+        else:
+            s = 'X'
+    return s
 
+def who_won(sym_x,sym):
+    if sym.upper() == 'X':
+        if sym_x == 'Player 1':
+            winner = 'Player 1'
+        else:
+            winner = 'Player 2'
+    elif sym.upper() == 'O':
+        if sym_x == 'Player 1':
+            winner = 'Player 2'
+        else:
+            winner = 'Player 1'
+    print(f"\nCongratulations! {winner} has won the game \n")
 
 
 print('Welcome to Tic Tac Toe Game \n')
@@ -43,8 +73,11 @@ while True:
     symbol = input('Player 1: Do you want to be X or O? \n')
     if symbol.upper() == 'X':
         print('Player 1 will go first. \n')
+        sym_X = 'Player 1'
     else:
         print('Player 2 will go first. \n')
+        sym_X = 'Player 2'
+
 
     start_game = input('Are you ready to play? Y/N \n')
     #depending on Y/N, the game will start or not start.
@@ -55,17 +88,17 @@ while True:
         update_board(game_board)
         symbol = 'X'
         while True:
-            game_board = get_position(symbol,game_board)
+            game_board, wrong_pos = get_position(symbol,game_board)
             #update game board
             update_board(game_board)
 
             #check for a winner - Y - declare winner; N - continue the loop
             #declare winner
-            winner_status = win_patterns(game_board)
+            winner_status = win_patterns(game_board,sym_X,symbol)
             if winner_status == True:
                 break
             else:
-                symbol = which_symbol(symbol)
+                symbol = which_symbol(symbol,wrong_pos)
                 continue
             #END INNER WHILE LOOP
 
